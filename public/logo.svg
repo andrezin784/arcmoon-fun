@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A0033"/>
+      <stop offset="100%" style="stop-color:#0A2540"/>
+    </linearGradient>
+    <linearGradient id="moonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="50%" style="stop-color:#FFC700"/>
+      <stop offset="100%" style="stop-color:#FFB700"/>
+    </linearGradient>
+    <linearGradient id="rocketGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#FF8C00"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="rocketGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="200" cy="200" r="195" fill="url(#bgGradient)" stroke="#FFD700" stroke-width="2" opacity="0.9"/>
+  
+  <!-- Stars -->
+  <g fill="#FFD700" opacity="0.6">
+    <circle cx="80" cy="100" r="2"/>
+    <circle cx="320" cy="80" r="1.5"/>
+    <circle cx="350" cy="200" r="2"/>
+    <circle cx="60" cy="280" r="1.5"/>
+    <circle cx="100" cy="320" r="2"/>
+    <circle cx="280" cy="330" r="1.5"/>
+    <circle cx="150" cy="60" r="1"/>
+    <circle cx="250" cy="350" r="1"/>
+  </g>
+  
+  <!-- Crescent Moon -->
+  <g filter="url(#glow)">
+    <path d="M 260 100 
+             A 120 120 0 1 1 260 300
+             A 80 80 0 1 0 260 100"
+          fill="url(#moonGradient)"
+          transform="translate(-30, 0)"/>
+  </g>
+  
+  <!-- Moon craters (subtle) -->
+  <g fill="#E6C200" opacity="0.3">
+    <circle cx="150" cy="180" r="15"/>
+    <circle cx="180" cy="250" r="10"/>
+    <circle cx="120" cy="230" r="8"/>
+  </g>
+  
+  <!-- Rocket -->
+  <g transform="translate(250, 120) rotate(-45)" filter="url(#rocketGlow)">
+    <!-- Rocket body -->
+    <path d="M 30 0 
+             Q 35 -5 40 0
+             L 50 40
+             Q 40 45 30 45
+             Q 20 45 10 40
+             L 20 0
+             Q 25 -5 30 0"
+          fill="url(#rocketGradient)"/>
+    
+    <!-- Rocket nose -->
+    <path d="M 30 0
+             Q 35 -15 30 -25
+             Q 25 -15 30 0"
+          fill="#FFD700"/>
+    
+    <!-- Rocket window -->
+    <circle cx="30" cy="10" r="6" fill="#0A2540" stroke="#FFD700" stroke-width="1"/>
+    <circle cx="30" cy="10" r="3" fill="#1A0033"/>
+    
+    <!-- Rocket fins -->
+    <path d="M 10 35 L 0 50 L 15 40 Z" fill="#FF8C00"/>
+    <path d="M 50 35 L 60 50 L 45 40 Z" fill="#FF8C00"/>
+    
+    <!-- Rocket flames -->
+    <g>
+      <path d="M 20 45 Q 30 70 25 85 Q 30 75 35 85 Q 30 70 40 45" fill="#FF4500" opacity="0.9"/>
+      <path d="M 23 45 Q 30 65 27 75 Q 30 68 33 75 Q 30 65 37 45" fill="#FFD700"/>
+      <path d="M 26 45 Q 30 58 28 65 Q 30 60 32 65 Q 30 58 34 45" fill="#FFFFFF" opacity="0.8"/>
+    </g>
+  </g>
+  
+  <!-- Sparkles around rocket -->
+  <g fill="#FFD700">
+    <polygon points="300,90 302,95 307,95 303,98 305,103 300,100 295,103 297,98 293,95 298,95" opacity="0.8"/>
+    <polygon points="320,150 321,153 324,153 322,155 323,158 320,156 317,158 318,155 316,153 319,153" opacity="0.6"/>
+  </g>
+</svg>
+

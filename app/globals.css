@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --moon-gold: #FFD700;
+  --moon-purple-dark: #1A0033;
+  --moon-purple: #2D1B4E;
+  --moon-blue-dark: #0A2540;
+  --moon-blue: #1E3A5F;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #1A0033 0%, #0A2540 100%);
+  min-height: 100vh;
+}
+
+body {
+  color: white;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+/* Hide spin buttons in input type number */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1A0033;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FFD700;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FFC700;
+}
+
+/* Glow effects */
+.glow-gold {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.2);
+}
+
+.glow-gold-strong {
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 60px rgba(255, 215, 0, 0.3);
+}
+
+.text-glow {
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(45, 27, 78, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+/* Button styles */
+.btn-moon {
+  @apply px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold rounded-xl;
+  @apply hover:from-yellow-400 hover:to-yellow-500 transition-all duration-300;
+  @apply shadow-lg hover:shadow-yellow-500/50;
+}
+
+.btn-moon:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Input styles */
+.input-moon {
+  @apply w-full px-4 py-3 bg-white/5 border border-yellow-500/30 rounded-xl;
+  @apply text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500;
+  @apply focus:ring-2 focus:ring-yellow-500/20 transition-all duration-300;
+}
+
+/* Card styles */
+.card-moon {
+  @apply p-6 rounded-2xl glass border border-yellow-500/20;
+  @apply hover:border-yellow-500/40 transition-all duration-300;
+}
+
+/* Animation for stars background */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.star {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Pulse animation for button */
+@keyframes moonPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.4);
+  }
+}
+
+.moon-pulse {
+  animation: moonPulse 2s ease-in-out infinite;
+}
+
+/* Rainbow kit customization */
+[data-rk] {
+  --rk-colors-accentColor: #FFD700 !important;
+  --rk-colors-accentColorForeground: #000000 !important;
+}
