@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { MOON_FACTORY_ABI } from '@/lib/contracts';
 import { FACTORY_ADDRESS, EXPLORER_URL } from '@/lib/wagmi';
@@ -11,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { Moon, Rocket, Image as ImageIcon, Check, Loader2 } from 'lucide-react';
 
 export default function CreateTokenForm() {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { address, isConnected } = useAccount();
   const [name, setName] = useState('');
@@ -87,6 +89,7 @@ export default function CreateTokenForm() {
         args: [name, symbol.toUpperCase(), description, imageURI],
       }, {
         onSuccess: (hash) => {
+          queryClient.invalidateQueries();
           toast.success(
             <div>
               <Check className="w-4 h-4 inline mr-1" /> Token created!{' '}

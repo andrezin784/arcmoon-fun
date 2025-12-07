@@ -38,7 +38,7 @@ export const config = getDefaultConfig({
   ssr: true,
 });
 
-export const FACTORY_ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || '0xb09199d2D9D41819076bF7de0Dbe0AD55e4dD2a4';
+export const FACTORY_ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || '0x6b7f4e1117F85808986f467EcC6ddF75E822EAF8';
 
 export const EXPLORER_URL = 'https://testnet.arcscan.app';
 export const FAUCET_URL = 'https://faucet.circle.com';

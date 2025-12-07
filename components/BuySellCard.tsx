@@ -54,7 +54,11 @@ export default function BuySellCard({ tokenAddress, totalSold, symbol, tokenImag
             const currentPrice = getPrice(currentSold);
             const usdcAmount = parseFloat(debouncedAmount);
             if (currentPrice === 0) return;
-            const estimatedTokens = usdcAmount / currentPrice;
+            
+            // Formula: Tokens = (sqrt(P^2 + 2*k*Cost) - P) / k
+            const term = Math.pow(currentPrice, 2) + 2 * PRICE_INCREMENT * usdcAmount;
+            const estimatedTokens = (Math.sqrt(term) - currentPrice) / PRICE_INCREMENT;
+            
             setEstimatedOut(estimatedTokens.toFixed(2));
         } else {
             const tokenAmount = parseFloat(debouncedAmount);
@@ -80,10 +84,10 @@ export default function BuySellCard({ tokenAddress, totalSold, symbol, tokenImag
     try {
         let hash;
         if (mode === 'buy') {
-            const minTokens = (parseFloat(estimatedOut) * 0.98).toFixed(18);
+            const minTokens = (parseFloat(estimatedOut) * 0.95).toFixed(18);
             hash = await buy(amount, minTokens);
         } else {
-            const minUSDC = (parseFloat(estimatedOut) * 0.98).toFixed(6);
+            const minUSDC = (parseFloat(estimatedOut) * 0.95).toFixed(6);
             hash = await sell(amount, minUSDC);
         }
 
@@ -206,7 +210,7 @@ export default function BuySellCard({ tokenAddress, totalSold, symbol, tokenImag
       
       {/* Footer Info */}
       <div className="text-xs text-gray-500 text-center">
-        Slippage: 2% • Gas included
+        Slippage: 5% • Gas included
       </div>
     </div>
   );
