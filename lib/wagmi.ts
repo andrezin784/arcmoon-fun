@@ -6,7 +6,6 @@ import { type Chain } from 'viem';
 export const arcTestnet = {
   id: 5042002,
   name: 'Arc Testnet',
-  iconUrl: 'https://pbs.twimg.com/profile_images/1816068687276072960/b7-7Yt33_400x400.jpg', // Logo da Arc
   nativeCurrency: {
     decimals: 6,
     name: 'USDC',

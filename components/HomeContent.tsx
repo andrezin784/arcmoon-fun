@@ -155,12 +155,7 @@ export default function HomeContent() {
                     className="mt-16 text-center"
                   >
                     <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-blue-500/30">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img 
-                        src="https://pbs.twimg.com/profile_images/1816068687276072960/b7-7Yt33_400x400.jpg" 
-                        alt="Arc Network" 
-                        className="w-6 h-6 rounded-full"
-                      />
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                       <span className="text-gray-200 text-sm font-medium">
                         Connected to Arc Testnet
                       </span>
@@ -170,15 +165,9 @@ export default function HomeContent() {
               </div>
             </main>
             <footer className="py-6 text-center text-gray-500 text-sm flex flex-col items-center justify-center gap-2">
-              <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                    src="https://pbs.twimg.com/profile_images/1816068687276072960/b7-7Yt33_400x400.jpg" 
-                    alt="Arc" 
-                    className="w-4 h-4 rounded-full grayscale"
-                />
-                <span>Powered by Arc Testnet</span>
-              </div>
+              <span className="opacity-50 hover:opacity-100 transition-opacity">
+                Powered by Arc Testnet
+              </span>
               <p>© 2025 ARCMOON.FUN</p>
             </footer>
           </div>
