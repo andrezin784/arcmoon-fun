@@ -85,7 +85,7 @@ export default function HomeContent() {
                             Need USDC for gas?
                           </p>
                           <p className="text-purple-400 text-sm group-hover:text-purple-300">
-                            Click here to get free USDC from the faucet →
+                            Click here to get 100 USDC every 24h →
                           </p>
                         </div>
                       </div>

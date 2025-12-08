@@ -41,5 +41,5 @@ export const config = getDefaultConfig({
 export const FACTORY_ADDRESS = process.env.NEXT_PUBLIC_FACTORY_ADDRESS || '0xF4ed1C49CdddEC03a5011bcD14ACCDC88bEd4bE5';
 
 export const EXPLORER_URL = 'https://testnet.arcscan.app';
-export const FAUCET_URL = 'https://faucet.circle.com';
+export const FAUCET_URL = 'https://easyfaucetarc.xyz/';
 
