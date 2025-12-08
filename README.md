@@ -1,135 +1,124 @@
-# 🌙 Moon.fun – Memecoin Launcher on Arc Testnet
+# ARCMOON.FUN – Memecoin Launcher on Arc Testnet
 
-![Moon.fun Logo](public/logo.svg)
+![ARCMOON.FUN Logo](public/logo.svg)
 
-**Moon.fun** é uma plataforma de lançamento de memecoins com bonding curve, rodando 100% na Arc Testnet. Lance seu token para a lua! 🚀
+**ARCMOON.FUN** is a memecoin launch platform with bonding curve, running 100% on Arc Testnet. Launch your token to the moon!
 
-## ✨ Features
+## Features
 
-- 🪙 **Criação de Tokens em 1 clique** - Deploy de ERC20 com bonding curve integrada
-- 📈 **Bonding Curve** - Preço aumenta conforme mais pessoas compram
-- 🌙 **Send Moon** - Envie tokens para múltiplos endereços de uma vez (gera centenas de TXs)
-- 💰 **Faucet integrado** - Link direto para pegar USDC grátis
-- 🎨 **UI Premium** - Visual moderno com animações Framer Motion
-- 📱 **100% Responsivo** - Funciona em desktop e mobile
+- **1-click Token Creation** - Deploy ERC20 with integrated bonding curve
+- **Bonding Curve** - Price increases as more people buy
+- **Custom Token Images** - Upload your own token image
+- **Integrated Faucet** - Direct link to get free USDC
+- **Premium UI** - Modern design with Framer Motion animations
+- **100% Responsive** - Works on desktop and mobile
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: Next.js 14, TypeScript, Tailwind CSS, Framer Motion
 - **Web3**: wagmi, viem, RainbowKit
 - **Smart Contracts**: Solidity 0.8.24, Hardhat
 - **Network**: Arc Testnet (Chain ID: 5042002)
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Instalar dependências
+### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Configurar variáveis de ambiente
+### 2. Configure environment variables
 
 ```bash
 cp .env.example .env.local
 ```
 
-Edite `.env.local` e adicione sua private key:
+Edit `.env.local` and add your private key:
 
 ```
-PRIVATE_KEY=sua_private_key_aqui
+PRIVATE_KEY=your_private_key_here
 ```
 
-### 3. Compilar contratos
+### 3. Compile contracts
 
 ```bash
 npx hardhat compile
 ```
 
-### 4. Pegar USDC para gas
+### 4. Get USDC for gas
 
-Antes de fazer deploy, você precisa de USDC na Arc Testnet:
-👉 https://faucet.circle.com
+Before deploying, you need USDC on Arc Testnet:
+https://faucet.circle.com
 
-### 5. Deploy da Factory
+### 5. Deploy Factory
 
 ```bash
-npx hardhat run scripts/deploy-factory.ts --network arcTestnet
+npx hardhat run scripts/deploy.js --network arcTestnet
 ```
 
-Copie o endereço da factory e adicione no `.env.local`:
+Copy the factory address and add to `.env.local`:
 
 ```
 NEXT_PUBLIC_FACTORY_ADDRESS=0x...
 ```
 
-### 6. Rodar o frontend
+### 6. Run frontend
 
 ```bash
 npm run dev
 ```
 
-Abra http://localhost:3000 🎉
+Open http://localhost:3000
 
-## 📝 Contratos
+## Contracts
 
 ### MoonToken.sol
-Token ERC20 com bonding curve integrada:
-- Supply inicial: 1 bilhão de tokens
-- 100 milhões alocados para o criador
-- Preço inicial: 0.001 USDC
-- Preço aumenta linearmente conforme tokens são vendidos
-- Função `sendMoon()` para enviar tokens em massa
+ERC20 token with integrated bonding curve:
+- Initial supply: 1 billion tokens
+- 100 million allocated to creator
+- Initial price: 0.001 USDC
+- Price increases linearly as tokens are sold
 
 ### MoonFactory.sol
-Factory para criar novos MoonTokens:
-- Cria tokens com nome, símbolo, descrição e imagem
-- Lista todos os tokens criados
-- Busca tokens por criador
+Factory to create new MoonTokens:
+- Creates tokens with name, symbol, description and image
+- Lists all created tokens
+- Search tokens by creator
 
-## 🌐 Arc Testnet
+## Arc Testnet
 
-| Propriedade | Valor |
-|-------------|-------|
+| Property | Value |
+|----------|-------|
 | Network Name | Arc Testnet |
 | Chain ID | 5042002 |
 | RPC URL | https://rpc.testnet.arc.network |
 | Explorer | https://testnet.arcscan.app |
 | Native Token | USDC (6 decimals) |
 
-### Adicionar à MetaMask
+### Add to MetaMask
 
-1. Abra MetaMask
-2. Clique em "Add Network"
-3. Preencha os dados acima
-4. Ou conecte pelo app - ele adiciona automaticamente!
+1. Open MetaMask
+2. Click "Add Network"
+3. Fill in the data above
+4. Or connect through the app - it adds automatically!
 
-## 🎮 Como usar
+## How to Use
 
-1. **Conecte sua wallet** (MetaMask recomendado)
-2. **Pegue USDC grátis** se precisar (link no app)
-3. **Crie um token** - Nome, símbolo e descrição
-4. **Compre tokens** na bonding curve
-5. **Send Moon** para gerar transações em massa na testnet!
+1. **Connect your wallet** (MetaMask recommended)
+2. **Get free USDC** if needed (link in app)
+3. **Create a token** - Name, symbol and description
+4. **Buy tokens** on the bonding curve
+5. **Sell tokens** when you want to take profit
 
-## 📊 Gerar transações em massa
+## Contributing
 
-O botão "Send Moon" permite enviar tokens para 20-50 endereços aleatórios de uma vez. Isso é útil para:
-- Testar a rede
-- Gerar atividade no explorer
-- Simular adoção do token
+Pull requests are welcome! For major changes, please open an issue first.
 
-Cada clique pode gerar 50-500+ transações!
-
-## 🤝 Contribuindo
-
-Pull requests são bem-vindos! Para mudanças maiores, abra uma issue primeiro.
-
-## 📜 Licença
+## License
 
 MIT
 
 ---
 
-**🌙 To the Moon!** 🚀
-
+**To the Moon!**
