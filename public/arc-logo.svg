@@ -8,3 +8,4 @@
   <circle cx="50" cy="50" r="50" fill="url(#arcGradient)"/>
   <path d="M50 12 C25 12 12 40 12 65 L24 65 C24 45 32 24 50 24 C68 24 76 45 76 65 L88 65 C88 40 75 12 50 12 Z" fill="#c5d5e5"/>
 </svg>
+

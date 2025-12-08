@@ -19,7 +19,11 @@ function TokenCard({ address }: { address: `0x${string}` }) {
   if (!tokenInfo) return null;
 
   const [name, symbol, description, imageURI, , , totalSold, currentPrice] = tokenInfo;
-  const priceFormatted = Number(formatEther(currentPrice * BigInt(1000))).toFixed(6);
+  
+  // Preço vem em unidades onde 1000 = 0.001 USDC
+  // Ou seja, dividir por 1,000,000 dá o valor em USDC
+  const priceValue = Number(currentPrice) / 1000000;
+  const priceFormatted = priceValue < 0.000001 ? "0.000000" : priceValue.toFixed(6);
 
   // Process image URI
   let displayImage = imageURI;
