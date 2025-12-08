@@ -9,9 +9,17 @@
 - **1-click Token Creation** - Deploy ERC20 with integrated bonding curve
 - **Bonding Curve** - Price increases as more people buy
 - **Custom Token Images** - Upload your own token image
-- **Integrated Faucet** - Direct link to get free USDC
+- **Integrated Faucet** - Direct link to get free USDC (100 USDC/24h)
 - **Premium UI** - Modern design with Framer Motion animations
 - **100% Responsive** - Works on desktop and mobile
+
+## Recent Fixes
+
+✅ **USDC Decimal Handling** - Proper 6-decimal conversion for Arc Network native USDC
+✅ **Minimum Amount Validation** - Min 0.001 USDC to avoid rounding errors
+✅ **Slippage Protection** - 1% slippage tolerance on all trades
+✅ **Enhanced Debugging** - Console logs for transaction tracking
+✅ **Safe Math** - BigInt operations throughout for precision
 
 ## Tech Stack
 
@@ -106,10 +114,34 @@ Factory to create new MoonTokens:
 ## How to Use
 
 1. **Connect your wallet** (MetaMask recommended)
-2. **Get free USDC** if needed (link in app)
+2. **Get free USDC** if needed (100 USDC every 24h from faucet)
 3. **Create a token** - Name, symbol and description
-4. **Buy tokens** on the bonding curve
+4. **Buy tokens** on the bonding curve (min 0.001 USDC)
 5. **Sell tokens** when you want to take profit
+
+## Testing
+
+### Test Buy Simulation
+
+Run the test script to simulate purchases without executing real transactions:
+
+```bash
+npx hardhat run scripts/test-buy.js --network arcTestnet
+```
+
+This will:
+- Connect to your deployed factory
+- Get the most recent token
+- Simulate buy transactions for 0.001, 1, and 10 USDC
+- Show expected tokens received with 1% slippage
+
+### Debug Mode
+
+Open browser console (F12) when making transactions to see detailed logs:
+- Input amounts
+- USDC units (6 decimals)
+- Token calculations
+- Min amounts with slippage
 
 ## Contributing
 

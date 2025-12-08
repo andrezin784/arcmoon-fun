@@ -1,6 +1,6 @@
 import { useWriteContract, useBalance, useAccount, usePublicClient } from 'wagmi';
 import React from 'react';
-import { parseUnits } from 'viem';
+import { parseUnits, formatUnits } from 'viem';
 import { MOON_TOKEN_ABI } from '@/lib/contracts';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -86,29 +86,44 @@ export function useMoonTrade(tokenAddress: string) {
   };
 
   const buy = async (amountUSDC: string, minTokens: string) => {
-    console.log("--- BUY DEBUG ---");
+    console.log("=== BUY TRANSACTION DEBUG ===");
     console.log("Input Amount (USDC):", amountUSDC);
     
-    // FORÇA conversão manual para 6 decimals
+    // Validate input
     const amountFloat = parseFloat(amountUSDC);
     if (isNaN(amountFloat) || amountFloat <= 0) {
       toast.error("Invalid amount");
       throw new Error("Invalid amount");
     }
     
-    // Multiplica por 1 milhão (6 casas decimais) e converte para BigInt
-    const parsedAmount = BigInt(Math.floor(amountFloat * 1000000));
-    console.log("Manual Parsed Amount (6 decimals):", parsedAmount.toString());
-    console.log("In USDC:", (Number(parsedAmount) / 1000000).toFixed(6), "USDC");
+    // Minimum 0.001 USDC to avoid rounding issues
+    if (amountFloat < 0.001) {
+      toast.error("Minimum 0.001 USDC required");
+      throw new Error("Minimum amount: 0.001 USDC");
+    }
     
+    // Convert to USDC units (6 decimals) using parseUnits
+    const parsedAmount = parseUnits(amountUSDC, 6);
+    console.log("USDC Amount (6 decimals):", parsedAmount.toString(), "units");
+    console.log("In USDC:", formatUnits(parsedAmount, 6), "USDC");
+    
+    // Verify minimum (1000 units = 0.001 USDC)
+    if (parsedAmount < 1000n) {
+      toast.error("Amount too small (min 0.001 USDC)");
+      throw new Error("Amount below minimum");
+    }
+    
+    // Parse min tokens with 1% slippage tolerance
     const parsedMinTokens = parseUnits(minTokens, 18);
-    console.log("Min Tokens:", parsedMinTokens.toString());
+    console.log("Min Tokens (with slippage):", formatUnits(parsedMinTokens, 18));
 
+    // Check balance
     if (ethBalance && ethBalance.value < parsedAmount) {
       toast.error("Insufficient USDC balance");
       throw new Error("Insufficient USDC balance");
     }
 
+    console.log("Submitting transaction...");
     return handleTransaction('buy', [parsedMinTokens], parsedAmount, 'tx-buy');
   };
 

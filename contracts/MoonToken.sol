@@ -109,12 +109,15 @@ contract MoonToken is ERC20, Ownable, ReentrancyGuard {
     }
     
     /**
-     * @dev Buy tokens with native currency (USDC on Arc)
+     * @dev Buy tokens with native currency (USDC on Arc - 6 decimals)
+     * @param minTokens Minimum tokens to receive (slippage protection)
      */
     function buy(uint256 minTokens) external payable nonReentrant {
         require(msg.value > 0, "Must send payment");
+        require(msg.value >= 1000, "Minimum 0.001 USDC required"); // 1000 units = 0.001 USDC (6 decimals)
         
         uint256 tokensToMint = calculateTokensForPayment(msg.value);
+        require(tokensToMint > 0, "Amount too small");
         require(tokensToMint >= minTokens, "Slippage too high");
         require(balanceOf(address(this)) >= tokensToMint, "Not enough tokens available");
         
@@ -123,7 +126,11 @@ contract MoonToken is ERC20, Ownable, ReentrancyGuard {
         
         _transfer(address(this), msg.sender, tokensToMint);
         
+        // Enhanced event for debugging
         emit TokensPurchased(msg.sender, tokensToMint, msg.value);
+        
+        console.log("Buy successful - USDC paid:", msg.value);
+        console.log("Tokens received:", tokensToMint);
     }
     
     /**

@@ -5,6 +5,7 @@ import { useMoonTrade } from '@/hooks/useMoonTrade';
 import { useAccount } from 'wagmi';
 import { formatUnits } from 'viem';
 import { Loader2, ArrowDownUp, Moon } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 interface BuySellCardProps {
   tokenAddress: string;
@@ -81,14 +82,25 @@ export default function BuySellCard({ tokenAddress, totalSold, symbol, tokenImag
   const handleAction = async () => {
     if (!amount) return;
 
+    // Validate minimum
+    const amountFloat = parseFloat(amount);
+    if (mode === 'buy' && amountFloat < 0.001) {
+        toast.error("Minimum 0.001 USDC required");
+        return;
+    }
+
     try {
         let hash;
         console.log("Input Amount:", amount);
         if (mode === 'buy') {
-            const minTokens = (parseFloat(estimatedOut) * 0.95).toFixed(18);
+            // 1% slippage tolerance (99% of estimated)
+            const minTokens = (parseFloat(estimatedOut) * 0.99).toFixed(18);
+            console.log("Estimated tokens:", estimatedOut);
+            console.log("Min tokens (1% slippage):", minTokens);
             hash = await buy(amount, minTokens);
         } else {
-            const minUSDC = (parseFloat(estimatedOut) * 0.95).toFixed(6);
+            // 1% slippage tolerance for sell
+            const minUSDC = (parseFloat(estimatedOut) * 0.99).toFixed(6);
             hash = await sell(amount, minUSDC);
         }
 
@@ -211,7 +223,7 @@ export default function BuySellCard({ tokenAddress, totalSold, symbol, tokenImag
       
       {/* Footer Info */}
       <div className="text-xs text-gray-500 text-center">
-        Slippage: 5% • Gas included
+        Slippage: 1% • Min amount: 0.001 USDC
       </div>
     </div>
   );
