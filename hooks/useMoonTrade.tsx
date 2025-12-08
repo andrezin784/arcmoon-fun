@@ -33,6 +33,13 @@ export function useMoonTrade(tokenAddress: string) {
     try {
       setIsPending(true);
       
+      console.log("=== WRITE CONTRACT DEBUG ===");
+      console.log("Function:", functionName);
+      console.log("Value (BigInt):", value.toString());
+      console.log("Value (Hex):", '0x' + value.toString(16));
+      console.log("Value (Number):", Number(value));
+      console.log("Args:", args);
+      
       // 1. Submit Transaction
       const hash = await writeContractAsync({
         address: tokenAddress as `0x${string}`,
@@ -106,6 +113,7 @@ export function useMoonTrade(tokenAddress: string) {
     const parsedAmount = parseUnits(amountUSDC, 6);
     console.log("USDC Amount (6 decimals):", parsedAmount.toString(), "units");
     console.log("In USDC:", formatUnits(parsedAmount, 6), "USDC");
+    console.log("In Hex:", '0x' + parsedAmount.toString(16));
     
     // Verify minimum (1000 units = 0.001 USDC)
     if (parsedAmount < 1000n) {
@@ -123,7 +131,9 @@ export function useMoonTrade(tokenAddress: string) {
       throw new Error("Insufficient USDC balance");
     }
 
-    console.log("Submitting transaction...");
+    console.log("Submitting transaction with value:", parsedAmount.toString());
+    console.log("CRITICAL CHECK: Value should be", amountFloat * 1000000, "(", amountFloat, "* 10^6)");
+    
     return handleTransaction('buy', [parsedMinTokens], parsedAmount, 'tx-buy');
   };
 
