@@ -154,18 +154,32 @@ export default function HomeContent() {
                     transition={{ delay: 0.7 }}
                     className="mt-16 text-center"
                   >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                      <span className="text-gray-400 text-sm">
-                        Connected to Arc Testnet (Chain ID: 5042002)
+                    <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-blue-500/30">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img 
+                        src="https://pbs.twimg.com/profile_images/1816068687276072960/b7-7Yt33_400x400.jpg" 
+                        alt="Arc Network" 
+                        className="w-6 h-6 rounded-full"
+                      />
+                      <span className="text-gray-200 text-sm font-medium">
+                        Connected to Arc Testnet
                       </span>
                     </div>
                   </motion.div>
                 </div>
               </div>
             </main>
-            <footer className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
-              <Moon className="w-4 h-4" /> ARCMOON.FUN - Powered by Arc Testnet
+            <footer className="py-6 text-center text-gray-500 text-sm flex flex-col items-center justify-center gap-2">
+              <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                    src="https://pbs.twimg.com/profile_images/1816068687276072960/b7-7Yt33_400x400.jpg" 
+                    alt="Arc" 
+                    className="w-4 h-4 rounded-full grayscale"
+                />
+                <span>Powered by Arc Testnet</span>
+              </div>
+              <p>© 2025 ARCMOON.FUN</p>
             </footer>
           </div>
           <Toaster
