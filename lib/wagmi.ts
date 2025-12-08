@@ -3,9 +3,10 @@ import { http } from 'wagmi';
 import { type Chain } from 'viem';
 
 // Arc Testnet Chain Definition
-export const arcTestnet: Chain = {
+export const arcTestnet = {
   id: 5042002,
   name: 'Arc Testnet',
+  iconUrl: 'https://pbs.twimg.com/profile_images/1816068687276072960/b7-7Yt33_400x400.jpg', // Logo da Arc
   nativeCurrency: {
     decimals: 6,
     name: 'USDC',
@@ -29,7 +30,7 @@ export const arcTestnet: Chain = {
 };
 
 export const config = getDefaultConfig({
-  appName: 'Moon.fun',
+  appName: 'ARCMOON.FUN',
   projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || 'moon-fun-default',
   chains: [arcTestnet],
   transports: {

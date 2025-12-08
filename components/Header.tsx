@@ -22,7 +22,7 @@ export default function Header() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo.svg"
-              alt="Moon.fun Logo"
+              alt="ARCMOON.FUN Logo"
               width={60}
               height={60}
               className="drop-shadow-lg"
@@ -33,7 +33,7 @@ export default function Header() {
               className="text-2xl font-bold text-yellow-400 text-glow"
               whileHover={{ scale: 1.05 }}
             >
-              Moon.fun
+              ARCMOON.FUN
             </motion.span>
             <span className="text-xs text-gray-400">
               Memecoin Launcher

@@ -53,8 +53,8 @@ export default function HomeContent() {
                       }}
                       transition={{ duration: 2, repeat: Infinity }}
                     >
-                      <span className="text-yellow-400">Moon</span>
-                      <span className="text-white">.fun</span>
+                      <span className="text-yellow-400">ARC</span>
+                      <span className="text-white">MOON.FUN</span>
                     </motion.h1>
                     <p className="text-xl text-gray-300 mb-2 flex items-center justify-center gap-2">
                       Launch your memecoin to the moon! <Rocket className="w-5 h-5 text-yellow-400" />
@@ -165,7 +165,7 @@ export default function HomeContent() {
               </div>
             </main>
             <footer className="py-4 text-center text-gray-500 text-sm flex items-center justify-center gap-2">
-              <Moon className="w-4 h-4" /> Moon.fun - Powered by Arc Testnet
+              <Moon className="w-4 h-4" /> ARCMOON.FUN - Powered by Arc Testnet
             </footer>
           </div>
           <Toaster

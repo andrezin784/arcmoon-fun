@@ -3,7 +3,7 @@ import './globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
 
 export const metadata: Metadata = {
-  title: 'Moon.fun - Memecoin Launcher on Arc Testnet',
+  title: 'ARCMOON.FUN - Memecoin Launcher on Arc Testnet',
   description: 'Launch your memecoin to the moon on Arc Testnet',
   icons: {
     icon: '/favicon.svg',
