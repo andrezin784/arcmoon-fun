@@ -83,6 +83,7 @@ export default function BuySellCard({ tokenAddress, totalSold, symbol, tokenImag
 
     try {
         let hash;
+        console.log("Input Amount:", amount);
         if (mode === 'buy') {
             const minTokens = (parseFloat(estimatedOut) * 0.95).toFixed(18);
             hash = await buy(amount, minTokens);

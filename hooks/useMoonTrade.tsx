@@ -86,8 +86,17 @@ export function useMoonTrade(tokenAddress: string) {
   };
 
   const buy = async (amountUSDC: string, minTokens: string) => {
-    const parsedAmount = parseUnits(amountUSDC, 6); // USDC 6 decimals
-    const parsedMinTokens = parseUnits(minTokens, 18); // Token 18 decimals
+    console.log("--- BUY DEBUG ---");
+    console.log("Input Amount (USDC):", amountUSDC);
+    
+    // Manual parsing check
+    const manualWei = BigInt(Math.floor(parseFloat(amountUSDC) * 1000000));
+    console.log("Manual Calc (x 10^6):", manualWei.toString());
+
+    const parsedAmount = parseUnits(amountUSDC, 6);
+    console.log("Viem ParseUnits (6 decimals):", parsedAmount.toString());
+    
+    const parsedMinTokens = parseUnits(minTokens, 18);
 
     if (ethBalance && ethBalance.value < parsedAmount) {
       toast.error("Insufficient USDC balance");
