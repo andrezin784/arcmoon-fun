@@ -6,7 +6,7 @@ import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { config } from '@/lib/wagmi';
 import { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { Rocket, Flame, AlertTriangle, Moon } from 'lucide-react';
+import { Rocket, Flame, AlertTriangle, Moon, Twitter } from 'lucide-react';
 import Header from '@/components/Header';
 import CreateTokenForm from '@/components/CreateTokenForm';
 import TokenList from '@/components/TokenList';
@@ -168,6 +168,16 @@ export default function HomeContent() {
               <span className="opacity-50 hover:opacity-100 transition-opacity">
                 Powered by Arc Testnet
               </span>
+              <div className="flex items-center gap-4 mt-2">
+                <a 
+                  href="https://x.com/moon_fun1" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-yellow-400 transition-colors"
+                >
+                  <Twitter className="w-5 h-5" />
+                </a>
+              </div>
               <p>© 2025 ARCMOON.FUN</p>
             </footer>
           </div>

@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Github } from 'lucide-react';
+import { Github, Twitter } from 'lucide-react';
 import WalletConnect from './WalletConnect';
 
 export default function Header() {
@@ -65,6 +65,15 @@ export default function Header() {
           >
             <Github className="w-5 h-5" />
             GitHub
+          </a>
+          <a
+            href="https://x.com/moon_fun1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-gray-300 hover:text-yellow-400 transition-colors font-medium"
+          >
+            <Twitter className="w-5 h-5" />
+            X
           </a>
         </nav>
 
