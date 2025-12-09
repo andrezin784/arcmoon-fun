@@ -62,25 +62,25 @@ export default function CreateTokenForm() {
     try {
       let imageURI = '';
       
-      // Process Image Upload to IPFS
+      // Process Image (Base64 encoding)
       if (imageFile) {
-        toast.loading('Uploading to IPFS...', { id: 'upload' });
+        toast.loading('Processing image...', { id: 'upload' });
         try {
           // Import upload function
           const { uploadImage } = await import('@/lib/ipfs-upload');
           
-          // Compress before upload (reduce size)
+          // Compress before encoding (reduce size)
           const compressed = await compressImage(imageFile);
           const compressedFile = new File([compressed], imageFile.name, { type: imageFile.type });
           
-          // Upload to IPFS (public, permanent)
+          // Convert to Base64 (stored on-chain, visible to everyone)
           imageURI = await uploadImage(compressedFile);
           
-          console.log('✅ Image uploaded to IPFS:', imageURI);
-          toast.success('Image uploaded!', { id: 'upload' });
+          console.log('✅ Image processed (Base64)');
+          toast.success('Image ready!', { id: 'upload' });
         } catch (error: any) {
-          console.error('Upload error:', error);
-          toast.error(error.message || 'Failed to upload image', { id: 'upload' });
+          console.error('Image error:', error);
+          toast.error(error.message || 'Failed to process image', { id: 'upload' });
           setIsCreating(false);
           return;
         }

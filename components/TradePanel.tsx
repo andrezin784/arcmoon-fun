@@ -43,7 +43,7 @@ export default function TradePanel({ tokenAddress }: TradePanelProps) {
     const localImage = getImage(imageId);
     if (localImage) displayImage = localImage;
   }
-  // New tokens use direct IPFS URLs
+  // New tokens use Base64 (data:image/...) stored on-chain
 
   return (
     <div className="flex flex-col h-full gap-4">
