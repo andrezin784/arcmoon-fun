@@ -28,6 +28,7 @@ function TokenCard({ address }: { address: `0x${string}` }) {
   // Process image URI
   let displayImage = imageURI;
   if (imageURI && imageURI.startsWith('local://')) {
+    // Legacy: old tokens with localStorage
     const imageId = imageURI.replace('local://', '');
     const localImage = getImage(imageId);
     if (localImage) {
@@ -36,6 +37,7 @@ function TokenCard({ address }: { address: `0x${string}` }) {
       displayImage = ''; // Fallback
     }
   }
+  // New tokens use direct URLs (https://...) - works on all devices
 
   return (
     <Link href={`/token/${address}`}>

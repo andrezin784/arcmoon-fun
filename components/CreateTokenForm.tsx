@@ -62,21 +62,23 @@ export default function CreateTokenForm() {
     try {
       let imageURI = '';
       
-      // Process Image Upload
+      // Process Image Upload (to public server)
       if (imageFile) {
-        toast.loading('Processing image...', { id: 'upload' });
+        toast.loading('Uploading image...', { id: 'upload' });
         try {
-          // Compress and save locally (ORIGINAL VERSION - WORKS!)
+          // Compress image first
           const compressed = await compressImage(imageFile);
-          const imageId = generateImageId();
+          const compressedFile = new File([compressed], imageFile.name, { type: imageFile.type });
           
-          saveImage(imageId, compressed);
-          imageURI = `local://${imageId}`;
+          // Upload to public server (accessible by everyone)
+          const { uploadImage } = await import('@/lib/image-upload-imgbb');
+          imageURI = await uploadImage(compressedFile);
           
-          toast.success('Image processed!', { id: 'upload' });
-        } catch (error) {
-          console.error('Image error:', error);
-          toast.error('Failed to process image', { id: 'upload' });
+          console.log('✅ Image URL:', imageURI);
+          toast.success('Image uploaded!', { id: 'upload' });
+        } catch (error: any) {
+          console.error('Upload error:', error);
+          toast.error(error.message || 'Failed to upload image', { id: 'upload' });
           setIsCreating(false);
           return;
         }

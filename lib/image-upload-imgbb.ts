@@ -1,0 +1,131 @@
+/**
+ * Upload de imagens usando ImgBB (gratuito, público, confiável)
+ * Funciona em todos os dispositivos
+ */
+
+// API key pública do ImgBB (free tier)
+const IMGBB_API_KEY = 'YOUR_IMGBB_API_KEY'; // Você pode pegar grátis em https://api.imgbb.com/
+
+/**
+ * Convert File/Blob to Base64
+ */
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // Remove the data URL prefix (data:image/png;base64,)
+      const base64 = result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+/**
+ * Upload image to ImgBB
+ * Returns public URL accessible by everyone
+ */
+export async function uploadImageToImgBB(file: File | string): Promise<string> {
+  try {
+    console.log('📤 Uploading to ImgBB...');
+
+    let imageBase64: string;
+
+    // Se já é base64 string, usa direto
+    if (typeof file === 'string') {
+      imageBase64 = file.split(',')[1]; // Remove data:image prefix
+    } else {
+      // Convert file to base64
+      imageBase64 = await blobToBase64(file);
+    }
+
+    // Upload usando FormData
+    const formData = new FormData();
+    formData.append('key', IMGBB_API_KEY);
+    formData.append('image', imageBase64);
+
+    const response = await fetch('https://api.imgbb.com/1/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`ImgBB upload failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error('ImgBB upload failed');
+    }
+
+    const imageUrl = data.data.url;
+    console.log('✅ Image uploaded:', imageUrl);
+
+    return imageUrl;
+
+  } catch (error) {
+    console.error('❌ ImgBB error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fallback: Use free.keep.sh (sem API key necessária)
+ */
+export async function uploadImageToKeepSH(blob: Blob): Promise<string> {
+  try {
+    console.log('📤 Uploading to keep.sh...');
+
+    const response = await fetch('https://free.keep.sh', {
+      method: 'POST',
+      body: blob,
+    });
+
+    if (!response.ok) {
+      throw new Error('keep.sh upload failed');
+    }
+
+    const url = await response.text();
+    console.log('✅ Image uploaded:', url.trim());
+    
+    return url.trim();
+
+  } catch (error) {
+    console.error('❌ keep.sh error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Main upload function with multiple fallbacks
+ */
+export async function uploadImage(file: File): Promise<string> {
+  // Validate
+  if (!file.type.startsWith('image/')) {
+    throw new Error('File must be an image');
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error('Image must be smaller than 5MB');
+  }
+
+  console.log('🖼️ Processing image:', file.size, 'bytes');
+
+  try {
+    // Try keep.sh first (no API key needed)
+    return await uploadImageToKeepSH(file);
+  } catch (error1) {
+    console.warn('keep.sh failed, trying ImgBB...');
+    
+    try {
+      // Fallback to ImgBB
+      return await uploadImageToImgBB(file);
+    } catch (error2) {
+      console.error('All upload methods failed');
+      throw new Error('Failed to upload image. Please try again.');
+    }
+  }
+}
