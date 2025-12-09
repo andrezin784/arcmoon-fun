@@ -38,10 +38,12 @@ export default function TradePanel({ tokenAddress }: TradePanelProps) {
   // Image processing
   let displayImage = imageURI;
   if (imageURI && imageURI.startsWith('local://')) {
+    // Legacy: local storage images (old tokens)
     const imageId = imageURI.replace('local://', '');
     const localImage = getImage(imageId);
     if (localImage) displayImage = localImage;
   }
+  // New tokens use direct IPFS URLs
 
   return (
     <div className="flex flex-col h-full gap-4">

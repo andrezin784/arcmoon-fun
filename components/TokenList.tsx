@@ -28,6 +28,7 @@ function TokenCard({ address }: { address: `0x${string}` }) {
   // Process image URI
   let displayImage = imageURI;
   if (imageURI && imageURI.startsWith('local://')) {
+    // Legacy local storage images (fallback for old tokens)
     const imageId = imageURI.replace('local://', '');
     const localImage = getImage(imageId);
     if (localImage) {
@@ -36,6 +37,7 @@ function TokenCard({ address }: { address: `0x${string}` }) {
       displayImage = ''; // Fallback
     }
   }
+  // New tokens use direct IPFS URLs (https://nftstorage.link/ipfs/...)
 
   return (
     <Link href={`/token/${address}`}>

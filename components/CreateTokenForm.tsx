@@ -62,21 +62,25 @@ export default function CreateTokenForm() {
     try {
       let imageURI = '';
       
-      // Process Image Upload
+      // Process Image Upload to IPFS
       if (imageFile) {
-        toast.loading('Processing image...', { id: 'upload' });
+        toast.loading('Uploading to IPFS...', { id: 'upload' });
         try {
-          // Compress and save locally (for MVP)
+          // Import upload function
+          const { uploadImage } = await import('@/lib/ipfs-upload');
+          
+          // Compress before upload (reduce size)
           const compressed = await compressImage(imageFile);
-          const imageId = generateImageId();
+          const compressedFile = new File([compressed], imageFile.name, { type: imageFile.type });
           
-          saveImage(imageId, compressed);
-          imageURI = `local://${imageId}`;
+          // Upload to IPFS (public, permanent)
+          imageURI = await uploadImage(compressedFile);
           
-          toast.success('Image processed!', { id: 'upload' });
-        } catch (error) {
-          console.error('Image error:', error);
-          toast.error('Failed to process image', { id: 'upload' });
+          console.log('✅ Image uploaded to IPFS:', imageURI);
+          toast.success('Image uploaded!', { id: 'upload' });
+        } catch (error: any) {
+          console.error('Upload error:', error);
+          toast.error(error.message || 'Failed to upload image', { id: 'upload' });
           setIsCreating(false);
           return;
         }

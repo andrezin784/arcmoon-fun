@@ -20,6 +20,7 @@
 ✅ **Slippage Protection** - 1% slippage tolerance on all trades
 ✅ **Enhanced Debugging** - Console logs for transaction tracking
 ✅ **Safe Math** - BigInt operations throughout for precision
+✅ **IPFS Image Storage** - Token images stored permanently on IPFS, visible to everyone
 
 ## Tech Stack
 
