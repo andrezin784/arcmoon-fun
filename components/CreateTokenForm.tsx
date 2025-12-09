@@ -66,25 +66,32 @@ export default function CreateTokenForm() {
       if (imageFile) {
         toast.loading('Processing image...', { id: 'upload' });
         try {
+          console.log('📷 Original image:', imageFile.name, imageFile.size, 'bytes');
+          
           // Import upload function
           const { uploadImage } = await import('@/lib/ipfs-upload');
           
           // Compress before encoding (reduce size)
           const compressed = await compressImage(imageFile);
+          console.log('🗜️ Compressed:', compressed.length, 'bytes');
+          
           const compressedFile = new File([compressed], imageFile.name, { type: imageFile.type });
           
           // Convert to Base64 (stored on-chain, visible to everyone)
           imageURI = await uploadImage(compressedFile);
           
-          console.log('✅ Image processed (Base64)');
+          console.log('✅ Image URI ready! Length:', imageURI.length);
+          console.log('   Starts with:', imageURI.substring(0, 50));
           toast.success('Image ready!', { id: 'upload' });
         } catch (error: any) {
-          console.error('Image error:', error);
+          console.error('❌ Image error:', error);
           toast.error(error.message || 'Failed to process image', { id: 'upload' });
           setIsCreating(false);
           return;
         }
       }
+
+      console.log('🚀 Creating token with:', { name, symbol, description, imageURI: imageURI ? 'YES (' + imageURI.length + ' chars)' : 'NO' });
 
       writeContract({
         address: FACTORY_ADDRESS as `0x${string}`,
