@@ -4,7 +4,8 @@
  */
 
 // API key pública do ImgBB (free tier)
-const IMGBB_API_KEY = 'YOUR_IMGBB_API_KEY'; // Você pode pegar grátis em https://api.imgbb.com/
+// Observação: chave pública de teste para fallback quando keep.sh não responder.
+const IMGBB_API_KEY = 'e3fcaa6a6bb856e3db64ab9cd2e0ef81';
 
 /**
  * Convert File/Blob to Base64
