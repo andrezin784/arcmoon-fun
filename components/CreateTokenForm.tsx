@@ -30,8 +30,8 @@ export default function CreateTokenForm() {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit (server/API check também)
-        toast.error('Image too large! Max 10MB.');
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit (Telegraph exige ~5MB)
+        toast.error('Image too large! Max 5MB.');
         return;
       }
       
@@ -72,7 +72,7 @@ export default function CreateTokenForm() {
 
           const compressedFile = new File([blob], imageFile.name, { type: blob.type });
 
-          // Upload (API interna -> catbox/keep, fallback ImgBB)
+          // Upload (API interna -> telegraph/catbox/keep)
           const { uploadImage } = await import('@/lib/image-upload-imgbb');
           imageURI = await uploadImage(compressedFile);
           

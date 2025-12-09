@@ -3,6 +3,22 @@ import { NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
+async function uploadToTelegraph(file: Blob, filename: string) {
+  const formData = new FormData();
+  formData.append('file', file, filename);
+
+  const res = await fetch('https://telegra.ph/upload', {
+    method: 'POST',
+    body: formData,
+  });
+
+  const data = await res.json().catch(() => null);
+  if (Array.isArray(data) && data[0]?.src) {
+    return `https://telegra.ph${data[0].src}`;
+  }
+  throw new Error(`telegraph ${res.status}: ${JSON.stringify(data)}`);
+}
+
 async function uploadToCatbox(file: Blob, filename: string) {
   const formData = new FormData();
   formData.append('reqtype', 'fileupload');
@@ -51,7 +67,15 @@ export async function POST(req: Request) {
 
     const filename = (file as any).name || 'upload.png';
 
-    // Tenta catbox primeiro
+    // 1) telegraph (no-key, estável)
+    try {
+      const url = await uploadToTelegraph(file, filename);
+      return NextResponse.json({ url });
+    } catch (err) {
+      console.warn('telegraph falhou, tentando catbox', err);
+    }
+
+    // 2) catbox
     try {
       const url = await uploadToCatbox(file, filename);
       return NextResponse.json({ url });
@@ -59,7 +83,7 @@ export async function POST(req: Request) {
       console.warn('catbox falhou, tentando keep.sh', err);
     }
 
-    // Fallback keep.sh
+    // 3) keep.sh
     const url = await uploadToKeep(file);
     return NextResponse.json({ url });
   } catch (error: any) {
