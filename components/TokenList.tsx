@@ -27,26 +27,15 @@ function TokenCard({ address }: { address: `0x${string}` }) {
 
   // Process image URI
   let displayImage = imageURI;
-  
-  console.log('📸 Token image URI:', imageURI ? imageURI.substring(0, 50) + '...' : 'NONE');
-  
   if (imageURI && imageURI.startsWith('local://')) {
-    // Legacy local storage images (old tokens only)
     const imageId = imageURI.replace('local://', '');
     const localImage = getImage(imageId);
     if (localImage) {
       displayImage = localImage;
-      console.log('   Using local storage image');
     } else {
-      displayImage = '';
-      console.log('   ⚠️ Local image not found');
+      displayImage = ''; // Fallback
     }
-  } else if (imageURI && imageURI.startsWith('data:image/')) {
-    console.log('   ✅ Using Base64 image');
-  } else if (imageURI) {
-    console.log('   ✅ Using URL image');
   }
-  // New tokens use Base64 (data:image/...) - works everywhere, no external dependencies
 
   return (
     <Link href={`/token/${address}`}>

@@ -62,36 +62,25 @@ export default function CreateTokenForm() {
     try {
       let imageURI = '';
       
-      // Process Image (Base64 encoding)
+      // Process Image Upload
       if (imageFile) {
         toast.loading('Processing image...', { id: 'upload' });
         try {
-          console.log('📷 Original image:', imageFile.name, imageFile.size, 'bytes');
-          
-          // Import upload function
-          const { uploadImage } = await import('@/lib/ipfs-upload');
-          
-          // Compress before encoding (reduce size)
+          // Compress and save locally (ORIGINAL VERSION - WORKS!)
           const compressed = await compressImage(imageFile);
-          console.log('🗜️ Compressed:', compressed.length, 'bytes');
+          const imageId = generateImageId();
           
-          const compressedFile = new File([compressed], imageFile.name, { type: imageFile.type });
+          saveImage(imageId, compressed);
+          imageURI = `local://${imageId}`;
           
-          // Convert to Base64 (stored on-chain, visible to everyone)
-          imageURI = await uploadImage(compressedFile);
-          
-          console.log('✅ Image URI ready! Length:', imageURI.length);
-          console.log('   Starts with:', imageURI.substring(0, 50));
-          toast.success('Image ready!', { id: 'upload' });
-        } catch (error: any) {
-          console.error('❌ Image error:', error);
-          toast.error(error.message || 'Failed to process image', { id: 'upload' });
+          toast.success('Image processed!', { id: 'upload' });
+        } catch (error) {
+          console.error('Image error:', error);
+          toast.error('Failed to process image', { id: 'upload' });
           setIsCreating(false);
           return;
         }
       }
-
-      console.log('🚀 Creating token with:', { name, symbol, description, imageURI: imageURI ? 'YES (' + imageURI.length + ' chars)' : 'NO' });
 
       writeContract({
         address: FACTORY_ADDRESS as `0x${string}`,
