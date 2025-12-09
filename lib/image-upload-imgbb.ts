@@ -73,28 +73,36 @@ export async function uploadImageToImgBB(file: File | string): Promise<string> {
 }
 
 /**
- * Fallback: Use free.keep.sh (sem API key necessária)
+ * Upload to catbox.moe (sem API key, confiável, permanente)
  */
-export async function uploadImageToKeepSH(blob: Blob): Promise<string> {
+export async function uploadImageToCatbox(file: File): Promise<string> {
   try {
-    console.log('📤 Uploading to keep.sh...');
+    console.log('📤 Uploading to catbox.moe...');
 
-    const response = await fetch('https://free.keep.sh', {
+    const formData = new FormData();
+    formData.append('reqtype', 'fileupload');
+    formData.append('fileToUpload', file);
+
+    const response = await fetch('https://catbox.moe/user/api.php', {
       method: 'POST',
-      body: blob,
+      body: formData,
     });
 
     if (!response.ok) {
-      throw new Error('keep.sh upload failed');
+      throw new Error('catbox upload failed');
     }
 
     const url = await response.text();
-    console.log('✅ Image uploaded:', url.trim());
     
+    if (!url.startsWith('https://files.catbox.moe/')) {
+      throw new Error('Invalid catbox response');
+    }
+
+    console.log('✅ Image uploaded:', url.trim());
     return url.trim();
 
   } catch (error) {
-    console.error('❌ keep.sh error:', error);
+    console.error('❌ catbox error:', error);
     throw error;
   }
 }
@@ -108,24 +116,19 @@ export async function uploadImage(file: File): Promise<string> {
     throw new Error('File must be an image');
   }
 
-  if (file.size > 5 * 1024 * 1024) {
-    throw new Error('Image must be smaller than 5MB');
+  if (file.size > 10 * 1024 * 1024) {
+    throw new Error('Image must be smaller than 10MB');
   }
 
   console.log('🖼️ Processing image:', file.size, 'bytes');
 
   try {
-    // Try keep.sh first (no API key needed)
-    return await uploadImageToKeepSH(file);
-  } catch (error1) {
-    console.warn('keep.sh failed, trying ImgBB...');
-    
-    try {
-      // Fallback to ImgBB
-      return await uploadImageToImgBB(file);
-    } catch (error2) {
-      console.error('All upload methods failed');
-      throw new Error('Failed to upload image. Please try again.');
-    }
+    // Try catbox.moe first (no API key, very reliable)
+    const url = await uploadImageToCatbox(file);
+    console.log('✅ Upload successful! URL:', url);
+    return url;
+  } catch (error: any) {
+    console.error('❌ Upload failed:', error.message);
+    throw new Error('Failed to upload image. Please try again.');
   }
 }
