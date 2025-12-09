@@ -1,10 +1,9 @@
 /**
- * Upload de imagens usando ImgBB (gratuito, público, confiável)
- * Funciona em todos os dispositivos
+ * Upload de imagens com múltiplos serviços e logs detalhados.
+ * Ordem de tentativa: ImgBB (API key pública) -> catbox.moe -> keep.sh
  */
 
 // API key pública do ImgBB (free tier)
-// Observação: chave pública de teste para fallback quando keep.sh não responder.
 const IMGBB_API_KEY = 'e3fcaa6a6bb856e3db64ab9cd2e0ef81';
 
 /**
@@ -15,8 +14,7 @@ function blobToBase64(blob: Blob): Promise<string> {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
-      // Remove the data URL prefix (data:image/png;base64,)
-      const base64 = result.split(',')[1];
+      const base64 = result.split(',')[1]; // remove data:image/...;base64,
       resolve(base64);
     };
     reader.onerror = reject;
@@ -25,108 +23,124 @@ function blobToBase64(blob: Blob): Promise<string> {
 }
 
 /**
- * Upload image to ImgBB
- * Returns public URL accessible by everyone
+ * Upload via ImgBB
  */
-export async function uploadImageToImgBB(file: File | string): Promise<string> {
-  try {
-    console.log('📤 Uploading to ImgBB...');
+async function uploadImageToImgBB(file: File | string): Promise<string> {
+  console.log('📤 [1/3] ImgBB...');
+  let imageBase64: string;
 
-    let imageBase64: string;
-
-    // Se já é base64 string, usa direto
-    if (typeof file === 'string') {
-      imageBase64 = file.split(',')[1]; // Remove data:image prefix
-    } else {
-      // Convert file to base64
-      imageBase64 = await blobToBase64(file);
-    }
-
-    // Upload usando FormData
-    const formData = new FormData();
-    formData.append('key', IMGBB_API_KEY);
-    formData.append('image', imageBase64);
-
-    const response = await fetch('https://api.imgbb.com/1/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error(`ImgBB upload failed: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error('ImgBB upload failed');
-    }
-
-    const imageUrl = data.data.url;
-    console.log('✅ Image uploaded:', imageUrl);
-
-    return imageUrl;
-
-  } catch (error) {
-    console.error('❌ ImgBB error:', error);
-    throw error;
+  if (typeof file === 'string') {
+    imageBase64 = file.split(',')[1];
+  } else {
+    imageBase64 = await blobToBase64(file);
   }
+
+  const formData = new FormData();
+  formData.append('image', imageBase64);
+
+  const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  const data = await response.json();
+  console.log('📥 ImgBB response:', data);
+
+  if (data?.success && data.data?.url) {
+    console.log('✅ ImgBB OK:', data.data.url);
+    return data.data.url;
+  }
+
+  throw new Error(data?.error?.message || 'ImgBB upload failed');
 }
 
 /**
- * Fallback: Use free.keep.sh (sem API key necessária)
+ * Upload via catbox.moe (sem API key)
  */
-export async function uploadImageToKeepSH(blob: Blob): Promise<string> {
-  try {
-    console.log('📤 Uploading to keep.sh...');
+async function uploadImageToCatbox(file: File): Promise<string> {
+  console.log('📤 [2/3] catbox.moe...');
 
-    const response = await fetch('https://free.keep.sh', {
-      method: 'POST',
-      body: blob,
-    });
+  const formData = new FormData();
+  formData.append('reqtype', 'fileupload');
+  formData.append('fileToUpload', file);
 
-    if (!response.ok) {
-      throw new Error('keep.sh upload failed');
-    }
+  const response = await fetch('https://catbox.moe/user/api.php', {
+    method: 'POST',
+    body: formData,
+  });
 
-    const url = await response.text();
-    console.log('✅ Image uploaded:', url.trim());
-    
-    return url.trim();
+  const text = await response.text();
+  console.log('📥 catbox response:', text);
 
-  } catch (error) {
-    console.error('❌ keep.sh error:', error);
-    throw error;
+  if (response.ok && text.startsWith('https://files.catbox.moe/')) {
+    console.log('✅ catbox OK:', text.trim());
+    return text.trim();
   }
+
+  throw new Error(`catbox upload failed: ${response.status} ${text}`);
 }
 
 /**
- * Main upload function with multiple fallbacks
+ * Upload via keep.sh (sem API key)
+ */
+async function uploadImageToKeepSH(blob: Blob): Promise<string> {
+  console.log('📤 [3/3] keep.sh...');
+
+  const response = await fetch('https://free.keep.sh', {
+    method: 'POST',
+    body: blob,
+  });
+
+  const text = await response.text();
+  console.log('📥 keep.sh response:', response.status, text);
+
+  if (response.ok && text.startsWith('https://')) {
+    console.log('✅ keep.sh OK:', text.trim());
+    return text.trim();
+  }
+
+  throw new Error(`keep.sh upload failed: ${response.status} ${text}`);
+}
+
+/**
+ * Função principal com fallbacks e mensagens ricas.
  */
 export async function uploadImage(file: File): Promise<string> {
-  // Validate
   if (!file.type.startsWith('image/')) {
     throw new Error('File must be an image');
   }
-
-  if (file.size > 5 * 1024 * 1024) {
-    throw new Error('Image must be smaller than 5MB');
+  if (file.size > 10 * 1024 * 1024) {
+    throw new Error('Image must be smaller than 10MB');
   }
 
-  console.log('🖼️ Processing image:', file.size, 'bytes');
+  console.log('🖼️ Processing image:', file.size, 'bytes', file.type);
 
+  const errors: string[] = [];
+
+  // 1) ImgBB
   try {
-    // Try keep.sh first (no API key needed)
-    return await uploadImageToKeepSH(file);
-  } catch (error1) {
-    console.warn('keep.sh failed, trying ImgBB...');
-    
-    try {
-      // Fallback to ImgBB
-      return await uploadImageToImgBB(file);
-    } catch (error2) {
-      console.error('All upload methods failed');
-      throw new Error('Failed to upload image. Please try again.');
-    }
+    return await uploadImageToImgBB(file);
+  } catch (err: any) {
+    console.warn('⚠️ ImgBB falhou:', err?.message || err);
+    errors.push(`ImgBB: ${err?.message || err}`);
   }
+
+  // 2) catbox.moe
+  try {
+    return await uploadImageToCatbox(file);
+  } catch (err: any) {
+    console.warn('⚠️ catbox falhou:', err?.message || err);
+    errors.push(`catbox: ${err?.message || err}`);
+  }
+
+  // 3) keep.sh
+  try {
+    return await uploadImageToKeepSH(file);
+  } catch (err: any) {
+    console.warn('⚠️ keep.sh falhou:', err?.message || err);
+    errors.push(`keep.sh: ${err?.message || err}`);
+  }
+
+  console.error('❌ Todos os serviços falharam:', errors.join(' | '));
+  throw new Error('Failed to upload image. ' + errors.join(' | '));
 }
