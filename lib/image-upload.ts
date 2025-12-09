@@ -18,8 +18,11 @@ export function fileToBase64(file: File): Promise<string> {
   });
 }
 
-// Comprimir imagem antes de salvar
-export async function compressImage(file: File, maxSize: number = 200): Promise<string> {
+// Comprimir imagem antes de salvar (retorna blob + dataUrl)
+export async function compressImage(
+  file: File,
+  maxSize: number = 512
+): Promise<{ blob: Blob; dataUrl: string }> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -29,7 +32,7 @@ export async function compressImage(file: File, maxSize: number = 200): Promise<
       img.onload = () => {
         const canvas = document.createElement('canvas');
         let { width, height } = img;
-        
+
         // Redimensionar mantendo proporção
         if (width > height) {
           if (width > maxSize) {
@@ -42,16 +45,24 @@ export async function compressImage(file: File, maxSize: number = 200): Promise<
             height = maxSize;
           }
         }
-        
+
         canvas.width = width;
         canvas.height = height;
-        
+
         const ctx = canvas.getContext('2d');
         ctx?.drawImage(img, 0, 0, width, height);
-        
+
         // Converter para JPEG com qualidade 0.8
         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-        resolve(dataUrl);
+        const byteString = atob(dataUrl.split(',')[1]);
+        const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        resolve({ blob, dataUrl });
       };
       img.onerror = reject;
     };
