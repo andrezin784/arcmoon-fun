@@ -28,8 +28,10 @@ function blobToBase64(blob: Blob): Promise<string> {
  * Returns public URL accessible by everyone
  */
 export async function uploadImageToImgBB(file: File | string): Promise<string> {
+  const API_KEY = 'e3fcaa6a6bb856e3db64ab9cd2e0ef81'; // Free public key
+  
   try {
-    console.log('📤 Uploading to ImgBB...');
+    console.log('📤 [3/3] Trying ImgBB...');
 
     let imageBase64: string;
 
@@ -43,31 +45,25 @@ export async function uploadImageToImgBB(file: File | string): Promise<string> {
 
     // Upload usando FormData
     const formData = new FormData();
-    formData.append('key', IMGBB_API_KEY);
     formData.append('image', imageBase64);
 
-    const response = await fetch('https://api.imgbb.com/1/upload', {
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
       method: 'POST',
       body: formData,
     });
 
-    if (!response.ok) {
-      throw new Error(`ImgBB upload failed: ${response.statusText}`);
-    }
-
     const data = await response.json();
+    console.log('📥 ImgBB response:', data);
 
-    if (!data.success) {
-      throw new Error('ImgBB upload failed');
+    if (data.success && data.data?.url) {
+      console.log('✅ ImgBB SUCCESS:', data.data.url);
+      return data.data.url;
     }
 
-    const imageUrl = data.data.url;
-    console.log('✅ Image uploaded:', imageUrl);
+    throw new Error(data.error?.message || 'ImgBB upload failed');
 
-    return imageUrl;
-
-  } catch (error) {
-    console.error('❌ ImgBB error:', error);
+  } catch (error: any) {
+    console.error('❌ ImgBB FAILED:', error.message);
     throw error;
   }
 }
@@ -77,7 +73,7 @@ export async function uploadImageToImgBB(file: File | string): Promise<string> {
  */
 export async function uploadImageToCatbox(file: File): Promise<string> {
   try {
-    console.log('📤 Uploading to catbox.moe...');
+    console.log('📤 [1/3] Trying catbox.moe...');
 
     const formData = new FormData();
     formData.append('reqtype', 'fileupload');
@@ -89,20 +85,58 @@ export async function uploadImageToCatbox(file: File): Promise<string> {
     });
 
     if (!response.ok) {
-      throw new Error('catbox upload failed');
+      const errorText = await response.text();
+      console.error('❌ catbox status:', response.status, errorText);
+      throw new Error(`catbox upload failed: ${response.status}`);
     }
 
     const url = await response.text();
+    console.log('📥 catbox response:', url);
     
-    if (!url.startsWith('https://files.catbox.moe/')) {
-      throw new Error('Invalid catbox response');
+    if (!url || !url.startsWith('https://files.catbox.moe/')) {
+      throw new Error(`Invalid catbox response: ${url}`);
     }
 
-    console.log('✅ Image uploaded:', url.trim());
+    console.log('✅ catbox.moe SUCCESS:', url.trim());
     return url.trim();
 
-  } catch (error) {
-    console.error('❌ catbox error:', error);
+  } catch (error: any) {
+    console.error('❌ catbox.moe FAILED:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Upload to postimages.org (alternativa confiável)
+ */
+export async function uploadImageToPostImages(file: File): Promise<string> {
+  try {
+    console.log('📤 [2/3] Trying postimages.org...');
+
+    const formData = new FormData();
+    formData.append('upload', file);
+
+    const response = await fetch('https://postimages.org/json/rr', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`postimages failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('📥 postimages response:', data);
+
+    if (data.status === 'OK' && data.url) {
+      console.log('✅ postimages.org SUCCESS:', data.url);
+      return data.url;
+    }
+
+    throw new Error('Invalid postimages response');
+
+  } catch (error: any) {
+    console.error('❌ postimages.org FAILED:', error.message);
     throw error;
   }
 }
@@ -120,15 +154,29 @@ export async function uploadImage(file: File): Promise<string> {
     throw new Error('Image must be smaller than 10MB');
   }
 
-  console.log('🖼️ Processing image:', file.size, 'bytes');
+  console.log('🖼️ Processing image:', file.size, 'bytes', file.type);
+  console.log('🔄 Trying 3 upload services...');
 
+  // Try catbox.moe first (no API key, very reliable)
   try {
-    // Try catbox.moe first (no API key, very reliable)
-    const url = await uploadImageToCatbox(file);
-    console.log('✅ Upload successful! URL:', url);
-    return url;
-  } catch (error: any) {
-    console.error('❌ Upload failed:', error.message);
-    throw new Error('Failed to upload image. Please try again.');
+    return await uploadImageToCatbox(file);
+  } catch (error1: any) {
+    console.warn('⚠️ Catbox failed, trying postimages...');
+  }
+
+  // Try postimages.org as second option
+  try {
+    return await uploadImageToPostImages(file);
+  } catch (error2: any) {
+    console.warn('⚠️ Postimages failed, trying ImgBB...');
+  }
+
+  // Try ImgBB as final fallback
+  try {
+    return await uploadImageToImgBB(file);
+  } catch (error3: any) {
+    console.error('❌ ALL SERVICES FAILED');
+    console.error('Catbox:', error3);
+    throw new Error('Failed to upload image. All services unavailable. Please try again later.');
   }
 }
